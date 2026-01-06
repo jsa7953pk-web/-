@@ -1,91 +1,131 @@
 <!DOCTYPE html>
 <html lang="ko">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>원라인 무비</title>
-
   <style>
     body {
       margin: 0;
       background: #0f0f0f;
       color: #ffffff;
-      font-family: system-ui, -apple-system, BlinkMacSystemFont;
+      font-family: system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Noto Sans KR", sans-serif;
       display: flex;
       justify-content: center;
       align-items: center;
-      height: 100vh;
+      min-height: 100vh;
+      padding: 24px;
     }
-
     .container {
       width: 100%;
-      max-width: 420px;
-      padding: 20px;
+      max-width: 520px;
       text-align: center;
     }
-
-    h1 {
-      font-size: 28px;
-      margin-bottom: 10px;
-    }
-
-    p {
-      opacity: 0.8;
-      margin-bottom: 20px;
-    }
-
+    h1 { font-size: 28px; margin: 0 0 8px; }
+    p { opacity: 0.85; margin: 0 0 18px; }
     textarea {
       width: 100%;
-      height: 100px;
-      border-radius: 12px;
-      padding: 12px;
+      height: 120px;
+      border-radius: 14px;
+      padding: 14px;
       font-size: 16px;
       border: none;
-      resize: none;
+      outline: none;
+      background: #2a2a2a;
+      color: #fff;
+      box-sizing: border-box;
     }
-
     button {
-      margin-top: 20px;
+      margin-top: 14px;
       width: 100%;
-      height: 52px;
-      background: #16a34a;
+      height: 56px;
+      border: none;
+      border-radius: 14px;
+      background: #146a34;
       color: white;
       font-size: 18px;
-      border: none;
-      border-radius: 12px;
+      font-weight: 700;
       cursor: pointer;
     }
-
-    .result {
-      margin-top: 30px;
-      font-size: 18px;
-      line-height: 1.6;
+    button:disabled {
+      opacity: 0.55;
+      cursor: not-allowed;
     }
+    .result {
+      margin-top: 18px;
+      text-align: left;
+      background: #151515;
+      border-radius: 14px;
+      padding: 16px;
+      line-height: 1.6;
+      white-space: pre-wrap;
+      display: none;
+    }
+    .badge { opacity: 0.9; font-weight: 700; margin-bottom: 10px; }
   </style>
 </head>
-
 <body>
   <div class="container">
     <h1>🎬 원라인 무비</h1>
     <p>한 줄로 영화를 상상해보세요</p>
 
-    <textarea id="input" placeholder="예: 성을 지키는 장군"></textarea>
-    <button onclick="makeMovie()">영화 만들어줘</button>
+    <textarea id="input" placeholder="예: 우주에서 길 잃은 강아지"></textarea>
+    <button id="btn" onclick="makeMovie()">영화 만들어줘</button>
 
-    <div class="result" id="result"></div>
+    <div id="resultBox" class="result">
+      <div class="badge">🎥 생성된 영화(테스트 출력)</div>
+      <div id="result"></div>
+    </div>
   </div>
 
   <script>
     function makeMovie() {
-      const text = document.getElementById("input").value;
+      const text = document.getElementById("input").value.trim();
+      const btn = document.getElementById("btn");
+      const box = document.getElementById("resultBox");
+      const out = document.getElementById("result");
 
-      if (!text.trim()) {
+      if (!text) {
         alert("한 줄을 입력해주세요!");
         return;
       }
 
-      document.getElementById("result").innerText =
-        "🎥 생성된 영화 컨셉:\n\n" + text;
+      // 1) 반응이 확 보이게: 버튼 로딩
+      btn.disabled = true;
+      const original = btn.textContent;
+      btn.textContent = "생성중…";
+
+      // 2) 결과 박스 보이기 + 스크롤
+      box.style.display = "block";
+      out.textContent = "⏳ 잠시만요…";
+      box.scrollIntoView({ behavior: "smooth", block: "start" });
+
+      // 3) 0.8초 뒤에 “영화처럼” 길게 출력
+      setTimeout(() => {
+        const movie =
+`🎬 원라인: ${text}
+
+[로그라인]
+"${text}" 한 줄에서 시작된 이야기.
+
+[시놉시스]
+어느 날, 예상치 못한 사건으로 주인공은 완전히 다른 세계에 떨어진다.
+처음엔 두렵고 막막하지만, 작은 단서 하나가 길을 열어준다.
+그 단서를 따라가며 숨겨진 진실과 ‘돌아갈 방법’을 찾게 된다.
+
+[3장면 미리보기]
+1) 오프닝: 낯선 공간에서 깨어나는 순간 (긴장감)
+2) 중반: 예상치 못한 동료/단서를 만남 (몰입)
+3) 엔딩: 선택의 순간—돌아갈까, 남을까? (여운)
+
+✅ (다음 단계) 원하면 내가 이걸 “9장면 쇼츠용”으로 자동 분할해줄게.`;
+
+        out.textContent = movie;
+
+        // 버튼 원복
+        btn.disabled = false;
+        btn.textContent = original;
+      }, 800);
     }
   </script>
 </body>
